@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "159492022010",
+    "firebase_url": "https://santatracker-d5395.firebaseio.com",
+    "project_id": "santatracker-d5395",
+    "storage_bucket": "santatracker-d5395.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:159492022010:android:95b8964bf2325ec6",
+        "android_client_info": {
+          "package_name": "com.gdgcincinnati.santatracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "159492022010-6hqg9kfs8j9pvf36hd1uf7duptgs57p5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvtvHt-SSxMhaakvq1VVlqfxU2GYeezeo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
