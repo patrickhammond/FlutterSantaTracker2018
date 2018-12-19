@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 void main() => runApp(MyApp());
 
@@ -38,12 +41,30 @@ class SantaTrackerWidget extends StatefulWidget {
 }
 
 class _SantaTrackerWidgetState extends State<SantaTrackerWidget> {
-  ValueNotifier _location;
+  ValueNotifier _location = ValueNotifier(Location(39.3332326, -84.3145426, 19, 'Mason, OH'));
+
+  StreamSubscription<Event> _locationSubscription;
 
   @override
   void initState() {
     super.initState();
-    _location = ValueNotifier(Location(39.3332326, -84.3145426, 19, 'Mason, OH'));
+
+    final firebase = FirebaseDatabase.instance;
+    final currentLocationRef = firebase.reference().child('current_location');
+    _locationSubscription = currentLocationRef.onValue.listen((event) {
+      final value = event.snapshot.value;
+      final lat = value['lat'];
+      final lng = value['lng'];
+      final bestZoom = value['bestZoom'].toDouble();
+      final city = value['city'];
+      _location.value = Location(lat, lng, bestZoom, city);
+    });
+  }
+
+  @override
+  void dispose() {
+    _locationSubscription?.cancel();
+    super.dispose();
   }
 
   @override
