@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:audioplayer/audioplayer.dart';
 
 void main() => runApp(MyApp());
 
@@ -44,13 +45,20 @@ class _SantaTrackerWidgetState extends State<SantaTrackerWidget> {
   ValueNotifier _location = ValueNotifier(Location(39.3332326, -84.3145426, 19, 'Mason, OH'));
 
   StreamSubscription<Event> _locationSubscription;
+  StreamSubscription<Event> _hohohoingSubscription;
+
+  AudioPlayer _audioPlayer;
 
   @override
   void initState() {
     super.initState();
 
+    _audioPlayer = new AudioPlayer();
+
     final firebase = FirebaseDatabase.instance;
     final currentLocationRef = firebase.reference().child('current_location');
+    final hohohoingRef = firebase.reference().child('ho_ho_hoing');
+
     _locationSubscription = currentLocationRef.onValue.listen((event) {
       final value = event.snapshot.value;
       final lat = value['lat'];
@@ -59,10 +67,19 @@ class _SantaTrackerWidgetState extends State<SantaTrackerWidget> {
       final city = value['city'];
       _location.value = Location(lat, lng, bestZoom, city);
     });
+
+    _hohohoingSubscription = hohohoingRef.onValue.listen((event) {
+      final hohohoing = event.snapshot.value as bool;
+      if (hohohoing) {
+        _audioPlayer.play(
+            "https://firebasestorage.googleapis.com/v0/b/santatracker-d5395.appspot.com/o/public%2Fhohoho.mp3?alt=media&token=fd20b061-8c1c-4727-81e5-14038654bae3");
+      }
+    });
   }
 
   @override
   void dispose() {
+    _hohohoingSubscription?.cancel();
     _locationSubscription?.cancel();
     super.dispose();
   }
