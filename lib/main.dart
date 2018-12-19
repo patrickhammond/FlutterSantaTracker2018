@@ -33,7 +33,7 @@ class MyHomePage extends StatelessWidget {
 }
 
 class SantaTrackerWidget extends StatelessWidget {
-  final location = Location(39.3332326, -84.3145426, 19, 'Mason, OH');
+  final location = ValueNotifier(Location(39.3332326, -84.3145426, 19, 'Mason, OH'));
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +46,12 @@ class SantaTrackerWidget extends StatelessWidget {
                 height: 48.0,
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: Text(location.city,
-                      style: Theme.of(context).textTheme.body2),
+                  child: ValueListenableBuilder(
+                      valueListenable: location,
+                      builder: (context, location, child) {
+                        return Text(location.city,
+                            style: Theme.of(context).textTheme.body2);
+                      }),
                 )),
             elevation: 2.0,
             shape: RoundedRectangleBorder(
@@ -61,7 +65,7 @@ class SantaTrackerWidget extends StatelessWidget {
       )
     ]);
   }
-  
+
   static SantaTrackerWidget of(BuildContext buildContext) {
     return buildContext.ancestorWidgetOfExactType(SantaTrackerWidget);
   }
@@ -73,21 +77,33 @@ class SantaMapWidget extends StatefulWidget {
 }
 
 class _SantaMapWidgetState extends State<SantaMapWidget> {
-  Location location;
+  ValueNotifier _location;
   GoogleMapController _controller;
 
   @override
   Widget build(BuildContext context) {
-    location = SantaTrackerWidget.of(context).location;
-    
+    _location = SantaTrackerWidget.of(context).location;
+
     return GoogleMap(onMapCreated: _onMapCreated);
+  }
+
+  @override
+  void dispose() {
+    _location.removeListener(_locationChanged);
+    super.dispose();
   }
 
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       _controller = controller;
-      _pinLocation(location);
+
+      _pinLocation(_location.value);
+      _location.addListener(_locationChanged);
     });
+  }
+
+  void _locationChanged() {
+    _pinLocation(_location.value);
   }
 
   void _pinLocation(Location location) {
