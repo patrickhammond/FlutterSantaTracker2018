@@ -38,13 +38,18 @@ class SantaTrackerWidget extends StatefulWidget {
 }
 
 class _SantaTrackerWidgetState extends State<SantaTrackerWidget> {
-  final ValueNotifier location =
-      ValueNotifier(Location(39.3332326, -84.3145426, 19, 'Mason, OH'));
+  ValueNotifier _location;
+
+  @override
+  void initState() {
+    super.initState();
+    _location = ValueNotifier(Location(39.3332326, -84.3145426, 19, 'Mason, OH'));
+  }
 
   @override
   Widget build(BuildContext context) {
     return SantaTrackerInheritedWidget(
-        location: location,
+        location: _location,
         child: Stack(children: <Widget>[
           SantaMapWidget(),
           Align(
@@ -55,7 +60,7 @@ class _SantaTrackerWidgetState extends State<SantaTrackerWidget> {
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
                       child: ValueListenableBuilder(
-                          valueListenable: location,
+                          valueListenable: _location,
                           builder: (context, location, child) {
                             return Text(location.city,
                                 style: Theme.of(context).textTheme.body2);
@@ -75,6 +80,8 @@ class _SantaTrackerWidgetState extends State<SantaTrackerWidget> {
   }
 }
 
+// You can think of an inherited widget as just a way of sharing state across
+// a widget tree.
 class SantaTrackerInheritedWidget extends InheritedWidget {
   final ValueNotifier location;
 
