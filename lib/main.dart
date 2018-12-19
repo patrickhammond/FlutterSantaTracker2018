@@ -167,7 +167,9 @@ class _SantaMapWidgetState extends State<SantaMapWidget> {
     ));
 
     _controller.clearMarkers();
-    _controller.addMarker(MarkerOptions(position: latLng));
+    _controller.addMarker(MarkerOptions(
+        position: latLng,
+        icon: BitmapDescriptor.fromAsset("assets/santa.png")));
   }
 }
 
