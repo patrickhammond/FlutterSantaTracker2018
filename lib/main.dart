@@ -29,7 +29,7 @@ class MyHomePage extends StatelessWidget {
           title: Text(title),
         ),
         body: Stack(children: <Widget>[
-          GoogleMap(),
+          SantaMapWidget(),
           Align(
             child: Padding(
               child: Material(
@@ -52,4 +52,51 @@ class MyHomePage extends StatelessWidget {
           )
         ]));
   }
+}
+
+class SantaMapWidget extends StatefulWidget {
+  @override
+  _SantaMapWidgetState createState() => _SantaMapWidgetState();
+}
+
+class _SantaMapWidgetState extends State<SantaMapWidget> {
+  GoogleMapController _controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return GoogleMap(onMapCreated: _onMapCreated);
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    setState(() {
+      _controller = controller;
+
+      // Map shouldn't be the one deciding on location...hmm...
+      _pinLocation(Location(39.3332326, -84.3145426, 19, 'Mason, OH'));
+    });
+  }
+
+  void _pinLocation(Location location) {
+    var latLng = LatLng(location.lat, location.lng);
+
+    _controller?.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        target: latLng,
+        tilt: 35.0,
+        zoom: location.zoom,
+      ),
+    ));
+
+    _controller.clearMarkers();
+    _controller.addMarker(MarkerOptions(position: latLng));
+  }
+}
+
+class Location {
+  final double lat;
+  final double lng;
+  final double zoom;
+  final String city;
+
+  Location(this.lat, this.lng, this.zoom, this.city);
 }
