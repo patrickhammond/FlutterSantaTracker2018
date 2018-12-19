@@ -32,42 +32,63 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-class SantaTrackerWidget extends StatelessWidget {
-  final location = ValueNotifier(Location(39.3332326, -84.3145426, 19, 'Mason, OH'));
+class SantaTrackerWidget extends StatefulWidget {
+  @override
+  State createState() => _SantaTrackerWidgetState();
+}
+
+class _SantaTrackerWidgetState extends State<SantaTrackerWidget> {
+  final ValueNotifier location =
+      ValueNotifier(Location(39.3332326, -84.3145426, 19, 'Mason, OH'));
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: <Widget>[
-      SantaMapWidget(),
-      Align(
-        child: Padding(
-          child: Material(
-            child: SizedBox(
-                height: 48.0,
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: ValueListenableBuilder(
-                      valueListenable: location,
-                      builder: (context, location, child) {
-                        return Text(location.city,
-                            style: Theme.of(context).textTheme.body2);
-                      }),
-                )),
-            elevation: 2.0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadiusDirectional.horizontal(
-                    start: Radius.circular(24.0),
-                    end: Radius.circular(24.0))),
-          ),
-          padding: EdgeInsets.only(bottom: 16.0),
-        ),
-        alignment: Alignment.bottomCenter,
-      )
-    ]);
+    return SantaTrackerInheritedWidget(
+        location: location,
+        child: Stack(children: <Widget>[
+          SantaMapWidget(),
+          Align(
+            child: Padding(
+              child: Material(
+                child: SizedBox(
+                    height: 48.0,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: ValueListenableBuilder(
+                          valueListenable: location,
+                          builder: (context, location, child) {
+                            return Text(location.city,
+                                style: Theme.of(context).textTheme.body2);
+                          }),
+                    )),
+                elevation: 2.0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusDirectional.horizontal(
+                        start: Radius.circular(24.0),
+                        end: Radius.circular(24.0))),
+              ),
+              padding: EdgeInsets.only(bottom: 16.0),
+            ),
+            alignment: Alignment.bottomCenter,
+          )
+        ]));
+  }
+}
+
+class SantaTrackerInheritedWidget extends InheritedWidget {
+  final ValueNotifier location;
+
+  SantaTrackerInheritedWidget(
+      {Key key, @required this.location, @required Widget child})
+      : super(key: key, child: child);
+
+  @override
+  bool updateShouldNotify(SantaTrackerInheritedWidget oldWidget) {
+    return location.value != oldWidget.location.value;
   }
 
-  static SantaTrackerWidget of(BuildContext buildContext) {
-    return buildContext.ancestorWidgetOfExactType(SantaTrackerWidget);
+  static SantaTrackerInheritedWidget of(BuildContext context) {
+    return context.ancestorWidgetOfExactType(SantaTrackerInheritedWidget);
   }
 }
 
@@ -82,7 +103,7 @@ class _SantaMapWidgetState extends State<SantaMapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _location = SantaTrackerWidget.of(context).location;
+    _location = SantaTrackerInheritedWidget.of(context).location;
 
     return GoogleMap(onMapCreated: _onMapCreated);
   }
@@ -129,4 +150,20 @@ class Location {
   final String city;
 
   Location(this.lat, this.lng, this.zoom, this.city);
+
+  // IDE generated
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Location &&
+          runtimeType == other.runtimeType &&
+          lat == other.lat &&
+          lng == other.lng &&
+          zoom == other.zoom &&
+          city == other.city;
+
+  // IDE generated
+  @override
+  int get hashCode =>
+      lat.hashCode ^ lng.hashCode ^ zoom.hashCode ^ city.hashCode;
 }
