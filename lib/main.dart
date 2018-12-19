@@ -24,12 +24,28 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Text(
-        'Somewhere, OH',
-      ),
-    );
+        appBar: AppBar(
+          title: Text(title),
+        ),
+        body: Align(
+          child: Padding(
+            child: Material(
+              child: SizedBox(
+                  height: 48.0,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text("Somewhere, OH",
+                        style: Theme.of(context).textTheme.body2),
+                  )),
+              elevation: 2.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusDirectional.horizontal(
+                      start: Radius.circular(24.0),
+                      end: Radius.circular(24.0))),
+            ),
+            padding: EdgeInsets.only(bottom: 16.0),
+          ),
+          alignment: Alignment.bottomCenter,
+        ));
   }
 }
