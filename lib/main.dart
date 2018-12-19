@@ -28,39 +28,55 @@ class MyHomePage extends StatelessWidget {
         appBar: AppBar(
           title: Text(title),
         ),
-        body: Stack(children: <Widget>[
-          SantaMapWidget(),
-          Align(
-            child: Padding(
-              child: Material(
-                child: SizedBox(
-                    height: 48.0,
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text("Somewhere, OH",
-                          style: Theme.of(context).textTheme.body2),
-                    )),
-                elevation: 2.0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.horizontal(
-                        start: Radius.circular(24.0),
-                        end: Radius.circular(24.0))),
-              ),
-              padding: EdgeInsets.only(bottom: 16.0),
-            ),
-            alignment: Alignment.bottomCenter,
-          )
-        ]));
+        body: SantaTrackerWidget());
+  }
+}
+
+class SantaTrackerWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var location = Location(39.3332326, -84.3145426, 19, 'Mason, OH');
+
+    return Stack(children: <Widget>[
+      SantaMapWidget(location),
+      Align(
+        child: Padding(
+          child: Material(
+            child: SizedBox(
+                height: 48.0,
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(location.city,
+                      style: Theme.of(context).textTheme.body2),
+                )),
+            elevation: 2.0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadiusDirectional.horizontal(
+                    start: Radius.circular(24.0),
+                    end: Radius.circular(24.0))),
+          ),
+          padding: EdgeInsets.only(bottom: 16.0),
+        ),
+        alignment: Alignment.bottomCenter,
+      )
+    ]);
   }
 }
 
 class SantaMapWidget extends StatefulWidget {
+  final Location location;
+
+  SantaMapWidget(this.location);
+
   @override
-  _SantaMapWidgetState createState() => _SantaMapWidgetState();
+  _SantaMapWidgetState createState() => _SantaMapWidgetState(location);
 }
 
 class _SantaMapWidgetState extends State<SantaMapWidget> {
+  final Location location;
   GoogleMapController _controller;
+
+  _SantaMapWidgetState(this.location);
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +86,7 @@ class _SantaMapWidgetState extends State<SantaMapWidget> {
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       _controller = controller;
-
-      // Map shouldn't be the one deciding on location...hmm...
-      _pinLocation(Location(39.3332326, -84.3145426, 19, 'Mason, OH'));
+      _pinLocation(location);
     });
   }
 
