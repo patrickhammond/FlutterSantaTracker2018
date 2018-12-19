@@ -33,12 +33,12 @@ class MyHomePage extends StatelessWidget {
 }
 
 class SantaTrackerWidget extends StatelessWidget {
+  final location = Location(39.3332326, -84.3145426, 19, 'Mason, OH');
+
   @override
   Widget build(BuildContext context) {
-    var location = Location(39.3332326, -84.3145426, 19, 'Mason, OH');
-
     return Stack(children: <Widget>[
-      SantaMapWidget(location),
+      SantaMapWidget(),
       Align(
         child: Padding(
           child: Material(
@@ -61,25 +61,25 @@ class SantaTrackerWidget extends StatelessWidget {
       )
     ]);
   }
+  
+  static SantaTrackerWidget of(BuildContext buildContext) {
+    return buildContext.ancestorWidgetOfExactType(SantaTrackerWidget);
+  }
 }
 
 class SantaMapWidget extends StatefulWidget {
-  final Location location;
-
-  SantaMapWidget(this.location);
-
   @override
-  _SantaMapWidgetState createState() => _SantaMapWidgetState(location);
+  _SantaMapWidgetState createState() => _SantaMapWidgetState();
 }
 
 class _SantaMapWidgetState extends State<SantaMapWidget> {
-  final Location location;
+  Location location;
   GoogleMapController _controller;
-
-  _SantaMapWidgetState(this.location);
 
   @override
   Widget build(BuildContext context) {
+    location = SantaTrackerWidget.of(context).location;
+    
     return GoogleMap(onMapCreated: _onMapCreated);
   }
 
